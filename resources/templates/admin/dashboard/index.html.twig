@@ -1,0 +1,28 @@
+{% extends 'admin/layout/base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="card">
+        <div class="card-title">Posts</div>
+        <div class="card-value">0</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Media</div>
+        <div class="card-value">0</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Users</div>
+        <div class="card-value">0</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Welcome</div>
+    <p style="color:#666; line-height:1.6; margin-top:8px;">
+        Fulcrum is running. Start by creating your first post.
+    </p>
+</div>
+{% endblock %}
