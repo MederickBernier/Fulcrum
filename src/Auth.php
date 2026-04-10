@@ -149,4 +149,25 @@ final class Auth{
             exit;
         }
     }
+
+    /*
+    |----------------------------------------------------------------------
+    | CSRF Protection
+    |----------------------------------------------------------------------
+    */
+
+    public function csrfToken():string{
+        if(empty($_SESSION['_csrf_token'])){
+            $_SESSION['_csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['_csrf_token'];
+    }
+
+    public function verifyCsrf():void{
+        $token = $_POST['_csrf_token'] ?? '';
+        if(!hash_equals($_SESSION['_csrf_token'] ?? '', $token)){
+            http_response_code(419);
+            exit('CSRF token mismatch');
+        }
+    }
 }

@@ -35,6 +35,9 @@ $auth->start();
 // Make flash messages available in all templates
 $twig->addGlobal('flash', $auth->getFlash());
 
+// Made CSRF token available in all templates
+$twig->addGlobal('csrf_token', $auth->csrfToken());
+
 // Boot controllers
 $dashboard = new DashboardController($twig, $db, $auth);
 $content   = new ContentController($twig, $db, $auth);
@@ -77,17 +80,7 @@ $uri       = rawurldecode($uri);
 $routeInfo = $dispatcher->dispatch($method, $uri);
 
 match ($routeInfo[0]) {
-    Dispatcher::NOT_FOUND => (function () use ($twig) {
-        http_response_code(404);
-        echo $twig->render('errors/404.html.twig');
-    })(),
-
-    Dispatcher::METHOD_NOT_ALLOWED => (function () {
-        http_response_code(405);
-        echo '405 — Method not allowed.';
-    })(),
-
-    Dispatcher::FOUND => (function () use (
+        Dispatcher::FOUND => (function () use (
         $routeInfo,
         $twig,
         $auth,
@@ -101,16 +94,21 @@ match ($routeInfo[0]) {
 
         match ($handler) {
             // Public
-            'home' => (function () use ($twig) {
-                echo $twig->render('home.html.twig');
+            'frontend.home' => (function () use ($frontend) {
+                echo $frontend->home();
             })(),
 
-            // Auth routes — public
+            'frontend.show' => (function () use ($frontend, $vars) {
+                echo $frontend->show($vars['slug']);
+            })(),
+
+            // Auth — public
             'auth.login' => (function () use ($authCtrl) {
                 echo $authCtrl->login();
             })(),
 
-            'auth.send' => (function () use ($authCtrl) {
+            'auth.send' => (function () use ($authCtrl, $auth) {
+                $auth->verifyCsrf();
                 $authCtrl->sendLink();
             })(),
 
@@ -118,11 +116,12 @@ match ($routeInfo[0]) {
                 $authCtrl->consumeLink($vars['token']);
             })(),
 
-            'auth.logout' => (function () use ($authCtrl) {
+            'auth.logout' => (function () use ($authCtrl, $auth) {
+                $auth->verifyCsrf();
                 $authCtrl->logout();
             })(),
 
-            // Protected routes
+            // Protected
             'admin.dashboard' => (function () use ($auth, $dashboard) {
                 $auth->require();
                 echo $dashboard->index();
@@ -140,6 +139,7 @@ match ($routeInfo[0]) {
 
             'content.store' => (function () use ($auth, $content) {
                 $auth->require();
+                $auth->verifyCsrf();
                 $content->store();
             })(),
 
@@ -150,20 +150,14 @@ match ($routeInfo[0]) {
 
             'content.update' => (function () use ($auth, $content, $vars) {
                 $auth->require();
+                $auth->verifyCsrf();
                 $content->update($vars['id']);
             })(),
 
             'content.delete' => (function () use ($auth, $content, $vars) {
                 $auth->require();
+                $auth->verifyCsrf();
                 $content->delete($vars['id']);
-            })(),
-
-            'frontend.home' => (function () use ($frontend) {
-                echo $frontend->home();
-            })(),
-
-            'frontend.show' => (function () use ($frontend, $vars) {
-                echo $frontend->show($vars['slug']);
             })(),
 
             default => (function () use ($twig) {

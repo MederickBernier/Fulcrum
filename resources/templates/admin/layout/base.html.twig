@@ -316,6 +316,7 @@
                     <span>{{ current_user.name }}</span>
                 {% endif %}
                 <form method="POST" action="/_fulcrum/logout" style="margin:0;">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
             </div>

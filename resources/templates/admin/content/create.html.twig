@@ -6,7 +6,7 @@
 {% block content %}
 
 <form method="POST" action="/_fulcrum/content">
-
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
     <div class="card" style="margin-bottom:16px;">
 
         <div class="form-group">
