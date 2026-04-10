@@ -10,6 +10,7 @@ use Fulcrum\Auth;
 use Fulcrum\Controllers\AuthController;
 use Fulcrum\Controllers\ContentController;
 use Fulcrum\Controllers\DashboardController;
+use Fulcrum\Controllers\FrontendController;
 use Fulcrum\Database;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -38,12 +39,10 @@ $twig->addGlobal('flash', $auth->getFlash());
 $dashboard = new DashboardController($twig, $db, $auth);
 $content   = new ContentController($twig, $db, $auth);
 $authCtrl  = new AuthController($twig, $auth);
+$frontend = new FrontendController($twig, $db);
 
 // Routes
 $dispatcher = simpleDispatcher(function (RouteCollector $r) {
-    // Home
-    $r->get('/', 'home');
-
     // Auth
     $r->get('/_fulcrum/login',       'auth.login');
     $r->post('/_fulcrum/login',      'auth.send');
@@ -61,6 +60,10 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->get('/_fulcrum/content/{id}/edit',     'content.edit');
     $r->post('/_fulcrum/content/{id}',         'content.update');
     $r->post('/_fulcrum/content/{id}/delete',  'content.delete');
+
+    // Public frontend
+    $r->get('/', 'frontend.home');
+    $r->get('/{slug}', 'frontend.show');
 });
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -91,6 +94,7 @@ match ($routeInfo[0]) {
         $dashboard,
         $content,
         $authCtrl,
+        $frontend,
     ) {
         $handler = $routeInfo[1];
         $vars    = $routeInfo[2];
@@ -152,6 +156,14 @@ match ($routeInfo[0]) {
             'content.delete' => (function () use ($auth, $content, $vars) {
                 $auth->require();
                 $content->delete($vars['id']);
+            })(),
+
+            'frontend.home' => (function () use ($frontend) {
+                echo $frontend->home();
+            })(),
+
+            'frontend.show' => (function () use ($frontend, $vars) {
+                echo $frontend->show($vars['slug']);
             })(),
 
             default => (function () use ($twig) {

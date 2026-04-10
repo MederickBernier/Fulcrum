@@ -1,0 +1,46 @@
+{% extends 'frontend/layout.html.twig' %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block content %}
+
+<article>
+
+    <header style="margin-bottom:32px;">
+        <h1 style="
+            font-size:32px;
+            font-weight:800;
+            line-height:1.2;
+            color:#1a1a2e;
+            margin-bottom:12px;
+        ">
+            {{ item.title }}
+        </h1>
+        <div style="font-size:13px; color:#aaa;">
+            {{ item.created_at|date('F j, Y') }}
+            {% if item.updated_at != item.created_at %}
+                · Updated {{ item.updated_at|date('F j, Y') }}
+            {% endif %}
+        </div>
+    </header>
+
+    {% if item.body %}
+        <div style="
+            font-size:16px;
+            line-height:1.8;
+            color:#333;
+            white-space:pre-wrap;
+        ">
+            {{ item.body }}
+        </div>
+    {% else %}
+        <p style="color:#aaa;">No content.</p>
+    {% endif %}
+
+    <footer style="margin-top:48px; padding-top:24px; border-top:1px solid #f0f0f0;">
+        <a href="/" style="font-size:14px; color:#7c6af7;">← Back</a>
+    </footer>
+
+</article>
+
+{% endblock %}
