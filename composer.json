@@ -1,6 +1,6 @@
 {
     "name": "fulcrum/cms",
-    "description": "A modern PHP CMS.",
+    "description": "A modern PHP CMS. The core is fixed. Plugins are the leverage.",
     "type": "project",
     "license": "MIT",
     "require": {
@@ -12,6 +12,9 @@
         }
     },
     "config": {
-        "optimize-autoloader": true
-    }
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "stable"
 }

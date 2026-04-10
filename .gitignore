@@ -1,0 +1,25 @@
+# Environment
+.env
+.env.local
+
+# Dependencies
+/vendor/
+
+# Storage
+/storage/cache/*
+/storage/logs/*
+/storage/media/*
+/storage/sessions/*
+!storage/**/.gitkeep
+
+# Docker runtime
+.docker/postgres/data/
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db

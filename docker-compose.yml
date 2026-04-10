@@ -1,0 +1,61 @@
+name: fulcrum
+
+services:
+
+  #
+  # PHP-FPM
+  #
+  php:
+    build:
+      context: .docker/php
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.3}
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    container_name: fulcrum_php
+    restart: unless-stopped
+    working_dir: /var/www/fulcrum
+    volumes:
+      - .:/var/www/fulcrum
+      - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/fulcrum.ini
+      - fulcrum_vendor:/var/www/fulcrum/vendor
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_KEY: ${APP_KEY:-}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+    networks:
+      - fulcrum
+
+  #
+  # Nginx
+  #
+  nginx:
+    build:
+      context: .docker/nginx
+      dockerfile: Dockerfile
+    container_name: fulcrum_nginx
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - .:/var/www/fulcrum
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - fulcrum
+
+#
+# Named volume for vendor
+# Keeps it in Docker's Linux filesystem
+# Avoids WSL2 bind mount slowness
+#
+volumes:
+  fulcrum_vendor:
+    driver: local
+
+networks:
+  fulcrum:
+    driver: bridge
