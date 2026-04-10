@@ -19,7 +19,6 @@ services:
     volumes:
       - .:/var/www/fulcrum
       - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/fulcrum.ini
-      - fulcrum_vendor:/var/www/fulcrum/vendor
     environment:
       APP_ENV: ${APP_ENV:-development}
       APP_DEBUG: ${APP_DEBUG:-true}
@@ -46,15 +45,6 @@ services:
       - php
     networks:
       - fulcrum
-
-#
-# Named volume for vendor
-# Keeps it in Docker's Linux filesystem
-# Avoids WSL2 bind mount slowness
-#
-volumes:
-  fulcrum_vendor:
-    driver: local
 
 networks:
   fulcrum:

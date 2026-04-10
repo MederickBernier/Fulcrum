@@ -71,15 +71,27 @@ RUN apk del $PHPIZE_DEPS \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 #
-# Non-root user matching WSL2 UID/GID
-# Prevents file permission headaches
+# Create group and user matching WSL2 UID/GID
+# This prevents bind mount permission issues
 #
 RUN addgroup -g ${GROUP_ID} fulcrum \
     && adduser \
     -u ${USER_ID} \
     -G fulcrum \
     -s /bin/bash \
-    -D fulcrum \
+    -D fulcrum
+
+#
+# Create all directories Fulcrum needs
+# and hand ownership to fulcrum user
+# before the USER switch
+#
+RUN mkdir -p /var/www/fulcrum/vendor \
+    && mkdir -p /var/www/fulcrum/storage/cache \
+    && mkdir -p /var/www/fulcrum/storage/logs \
+    && mkdir -p /var/www/fulcrum/storage/sessions \
+    && mkdir -p /var/www/fulcrum/storage/media \
+    && mkdir -p /var/www/fulcrum/public \
     && chown -R fulcrum:fulcrum /var/www
 
 WORKDIR /var/www/fulcrum
