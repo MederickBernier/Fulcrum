@@ -2,9 +2,6 @@ name: fulcrum
 
 services:
 
-  #
-  # PHP-FPM
-  #
   php:
     build:
       context: .docker/php
@@ -24,12 +21,17 @@ services:
       APP_DEBUG: ${APP_DEBUG:-true}
       APP_KEY: ${APP_KEY:-}
       APP_URL: ${APP_URL:-http://localhost:8080}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-fulcrum}
+      DB_USER: ${DB_USER:-fulcrum}
+      DB_PASSWORD: ${DB_PASSWORD:-fulcrum}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - fulcrum
 
-  #
-  # Nginx
-  #
   nginx:
     build:
       context: .docker/nginx
@@ -45,6 +47,42 @@ services:
       - php
     networks:
       - fulcrum
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: fulcrum_postgres
+    restart: unless-stopped
+    ports:
+      - "${DB_EXTERNAL_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME:-fulcrum}
+      POSTGRES_USER: ${DB_USER:-fulcrum}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-fulcrum}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - fulcrum_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-fulcrum} -d ${DB_NAME:-fulcrum}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - fulcrum
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: fulcrum_mailpit
+    restart: unless-stopped
+    ports:
+      - "${MAIL_UI_PORT:-8025}:8025"
+      - "${MAIL_SMTP_PORT:-1025}:1025"
+    networks:
+      - fulcrum
+
+volumes:
+  fulcrum_postgres:
+    driver: local
 
 networks:
   fulcrum:
