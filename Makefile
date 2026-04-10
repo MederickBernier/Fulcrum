@@ -21,6 +21,9 @@ logs-php:
 logs-nginx:
 	docker compose logs -f nginx
 
+migrate:
+	docker compose exec php php database/migrate.php
+
 fresh:
 	docker compose down -v
 	docker compose build --no-cache
