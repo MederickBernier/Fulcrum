@@ -40,38 +40,6 @@ final class ContentController
         ]);
     }
 
-    public function store(): void
-    {
-        $title  = trim($_POST['title']  ?? '');
-        $body   = trim($_POST['body']   ?? '');
-        $type   = trim($_POST['type']   ?? 'post');
-        $status = trim($_POST['status'] ?? 'draft');
-        $slug   = $this->generateSlug($title);
-
-        if ($title === '') {
-            // For now redirect back with no error message
-            // We add flash messages later
-            header('Location: /_fulcrum/content/create');
-            exit;
-        }
-
-        $stmt = $this->db->prepare("
-            INSERT INTO content (type, title, slug, body, status)
-            VALUES (:type, :title, :slug, :body, :status)
-        ");
-
-        $stmt->execute([
-            'type'   => $type,
-            'title'  => $title,
-            'slug'   => $slug,
-            'body'   => $body,
-            'status' => $status,
-        ]);
-
-        header('Location: /_fulcrum/content');
-        exit;
-    }
-
     public function edit(string $id): string
     {
         $stmt = $this->db->prepare("
@@ -91,45 +59,78 @@ final class ContentController
         ]);
     }
 
-    public function update(string $id): void
-    {
-        $title  = trim($_POST['title']  ?? '');
-        $body   = trim($_POST['body']   ?? '');
+    public function store(): void{
+        $title = trim($_POST['title'] ??'');
+        $body = trim($_POST['body'] ?? '');
+        $type = trim($_POST['type'] ?? 'post');
+        $status = trim($_POST['status'] ?? 'draft');
+        $slug = $this->generateSlug($title);
+
+        if($title === ''){
+            $this->auth->flash('error', 'Title is required');
+            Header("Location:/_fulcrum/create");
+            exit;
+        }
+
+        $stmt = $this->db->prepare("
+            INSERT INTO content (type, title, slug, body, status)
+            VALUES (:type, :title, :slug, :body, :status);
+        ");
+
+        $stmt->execute([
+            'type'      => $type,
+            'title'     => $title,
+            'slug'      => $slug,
+            'body'      => $body,
+            'status'    => $status,
+        ]);
+
+        $this->auth->flash('success', 'Content created successfully');
+        header("Location:/_fulcrum/content");
+        exit;
+    }
+
+    public function update(string $id): void{
+        $title = trim($_POST['title'] ?? '');
+        $body = trim($_POST['body'] ?? '');
         $status = trim($_POST['status'] ?? 'draft');
 
-        if ($title === '') {
-            header("Location: /_fulcrum/content/{$id}/edit");
+        if($title === ''){
+            $this->auth->flash('error', 'Title is required');
+            Header("Location:/_fulcrum/content/{$id}/edit");
             exit;
         }
 
         $stmt = $this->db->prepare("
             UPDATE content
-            SET title      = :title,
-                body       = :body,
-                status     = :status,
+            SET title = :title,
+                body = :body,
+                status = :status,
                 updated_at = NOW()
             WHERE id = :id
         ");
 
         $stmt->execute([
-            'title'  => $title,
-            'body'   => $body,
-            'status' => $status,
-            'id'     => $id,
+            'title'     => $title,
+            'body'      => $body,
+            'status'    => $status,
+            'id'        => $id,
         ]);
 
-        header('Location: /_fulcrum/content');
+        $this->auth->flash('success', 'Content updated successfully');
+        Header("Location:/_fulcrum/content");
         exit;
     }
 
-    public function delete(string $id): void
-    {
+    public function delete(string $id):void{
         $stmt = $this->db->prepare("
             DELETE FROM content WHERE id = :id
         ");
+
         $stmt->execute(['id' => $id]);
 
-        header('Location: /_fulcrum/content');
+        $this->auth->flash('success', 'Content deleted.');
+        Header("Location:/_fulcrum/content");
         exit;
     }
 

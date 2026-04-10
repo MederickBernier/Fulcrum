@@ -31,6 +31,9 @@ $db = Database::connect();
 $auth = new Auth($db);
 $auth->start();
 
+// Make flash messages available in all templates
+$twig->addGlobal('flash', $auth->getFlash());
+
 // Boot controllers
 $dashboard = new DashboardController($twig, $db, $auth);
 $content   = new ContentController($twig, $db, $auth);

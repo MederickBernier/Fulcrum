@@ -123,6 +123,22 @@ final class Auth{
 
     /*
     |----------------------------------------------------------------------
+    | Flash Message
+    |----------------------------------------------------------------------
+    */
+
+    public function flash(string $type, string $message):void{
+        $_SESSION['_flash'][$type] = $message;
+    }
+
+    public function getFlash():array{
+        $flash = $_SESSION['_flash'] ?? [];
+        unset($_SESSION['_flash']);
+        return $flash;
+    }
+
+    /*
+    |----------------------------------------------------------------------
     | Require auth -  call at top of protected routes
     |----------------------------------------------------------------------
     */
