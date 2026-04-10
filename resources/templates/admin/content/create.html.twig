@@ -1,0 +1,65 @@
+{% extends 'admin/layout/base.html.twig' %}
+
+{% block title %}New Content{% endblock %}
+{% block page_title %}New Content{% endblock %}
+
+{% block content %}
+
+<form method="POST" action="/_fulcrum/content">
+
+    <div class="card" style="margin-bottom:16px;">
+
+        <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text"
+                   name="title"
+                   class="form-input"
+                   placeholder="Enter title..."
+                   autofocus
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Body</label>
+            <textarea name="body"
+                      class="form-textarea"
+                      placeholder="Write your content..."
+                      rows="12"></textarea>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <div style="display:flex; gap:16px; align-items:flex-end;">
+
+            <div class="form-group" style="margin:0; flex:1;">
+                <label class="form-label">Type</label>
+                <select name="type" class="form-select">
+                    <option value="post">Post</option>
+                    <option value="page">Page</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin:0; flex:1;">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+                <a href="/_fulcrum/content" class="btn btn-secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="btn">
+                    Save
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}

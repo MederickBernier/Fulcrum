@@ -1,0 +1,77 @@
+{% extends 'admin/layout/base.html.twig' %}
+
+{% block title %}Content{% endblock %}
+{% block page_title %}Content{% endblock %}
+
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div style="color:#666; font-size:13px;">
+        {{ items|length }} item(s)
+    </div>
+    <a href="/_fulcrum/content/create" class="btn">
+        + New Content
+    </a>
+</div>
+
+{% if items is empty %}
+    <div class="card">
+        <p style="color:#888; text-align:center; padding:20px 0;">
+            No content yet.
+            <a href="/_fulcrum/content/create" style="color:#7c6af7;">Create your first piece.</a>
+        </p>
+    </div>
+{% else %}
+    <div class="card" style="padding:0;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <strong>{{ item.title }}</strong>
+                        <div style="font-size:11px; color:#aaa; margin-top:2px;">
+                            /{{ item.slug }}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-type">{{ item.type }}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ item.status }}">
+                            {{ item.status }}
+                        </span>
+                    </td>
+                    <td style="color:#888; font-size:12px;">
+                        {{ item.created_at|date('Y-m-d') }}
+                    </td>
+                    <td>
+                        <a href="/_fulcrum/content/{{ item.id }}/edit"
+                           style="color:#7c6af7; text-decoration:none; font-size:12px;">
+                            Edit
+                        </a>
+                        <form method="POST"
+                              action="/_fulcrum/content/{{ item.id }}/delete"
+                              style="display:inline;"
+                              onsubmit="return confirm('Delete this item?')">
+                            <button type="submit" class="btn-link-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+{% endblock %}

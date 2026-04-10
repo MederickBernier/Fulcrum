@@ -127,6 +127,119 @@
             gap: 16px;
             margin-bottom: 24px;
         }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #7c6af7;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .btn:hover { background: #6a58e0; }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .btn-secondary:hover { background: #e0e0e0; }
+
+        .btn-link-danger {
+            background: none;
+            border: none;
+            color: #e05555;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0 0 0 8px;
+            text-decoration: none;
+        }
+
+        .btn-link-danger:hover { text-decoration: underline; }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #888;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:last-child td { border-bottom: none; }
+        .table tbody tr:hover td { background: #fafafa; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-published { background: #e6f7ee; color: #2d7a4f; }
+        .badge-draft     { background: #f0f0f0; color: #888; }
+        .badge-type      { background: #ede9fe; color: #6d4df2; }
+
+        /* Forms */
+        .form-group { margin-bottom: 16px; }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            background: #fff;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #7c6af7;
+        }
+
+        .form-textarea { resize: vertical; }
     </style>
 </head>
 <body>
@@ -141,8 +254,8 @@
             <a href="/_fulcrum" class="{{ active == 'dashboard' ? 'active' : '' }}">
                 Dashboard
             </a>
-            <a href="/_fulcrum/posts" class="{{ active == 'posts' ? 'active' : '' }}">
-                Posts
+            <a href="/_fulcrum/content" class="{{ active == 'content' ? 'active' : '' }}">
+                Content
             </a>
             <a href="/_fulcrum/media" class="{{ active == 'media' ? 'active' : '' }}">
                 Media
