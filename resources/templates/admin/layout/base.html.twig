@@ -92,6 +92,14 @@
             color: #333;
         }
 
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: #888;
+        }
+
         .content {
             padding: 24px;
             flex: 1;
@@ -163,6 +171,18 @@
         }
 
         .btn-link-danger:hover { text-decoration: underline; }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .btn-logout:hover { color: #333; }
 
         /* Tables */
         .table {
@@ -270,6 +290,14 @@
     <div class="main">
         <header class="topbar">
             <span class="topbar-title">{% block page_title %}Dashboard{% endblock %}</span>
+            <div class="topbar-user">
+                {% if current_user is defined and current_user %}
+                    <span>{{ current_user.name }}</span>
+                {% endif %}
+                <form method="POST" action="/_fulcrum/logout" style="margin:0;">
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
+            </div>
         </header>
         <main class="content">
             {% block content %}{% endblock %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fulcrum\Controllers;
 
+use Fulcrum\Auth;
 use Fulcrum\Database;
 use Twig\Environment;
 
@@ -12,6 +13,7 @@ final class ContentController
     public function __construct(
         private readonly Environment $twig,
         private readonly Database    $db,
+        private readonly Auth        $auth,
     ) {}
 
     public function index(): string
@@ -25,8 +27,9 @@ final class ContentController
             ->fetchAll();
 
         return $this->twig->render('admin/content/index.html.twig', [
-            'active'  => 'content',
-            'items'   => $items,
+            'active'        => 'content',
+            'current_user'  => $this->auth->user(),
+            'items'         => $items,
         ]);
     }
 
